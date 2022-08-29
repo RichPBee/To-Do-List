@@ -13,4 +13,6 @@ Therefore, I will timestamp and date the README at time of starting and
 time of completion. 
 
 START: 29.08.22 // 13:08 
+STOPPED: 29.08.22 // 17:18
+RESUMED: 29.08.22 //18:00
 FINISH: 
