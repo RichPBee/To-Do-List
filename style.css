@@ -126,12 +126,19 @@ body {
     box-shadow: -3px 0px 5px 0px black;;
     border: none;
     margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    text-shadow: 1px 1px 0px grey;
 }
 
 .page-selector:hover {
     scale: 1.02;
     cursor: pointer;
     box-shadow: -3px 0px 5px 0px teal;
+    background-color: teal;
+
 }
 
 .user-input {
