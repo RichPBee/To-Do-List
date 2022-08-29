@@ -15,4 +15,6 @@ time of completion.
 START: 29.08.22 // 13:08 
 STOPPED: 29.08.22 // 17:18
 RESUMED: 29.08.22 //18:00
+STOPPED: 30.08.22 // 00:16 -- with breaks
+RESUMED: 
 FINISH: 
