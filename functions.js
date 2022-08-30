@@ -1,4 +1,9 @@
 let totalTodoList = [];
+let todoDeleteButtons = document.querySelectorAll(".list-button.delete");
+let todoEditButtons = document.querySelectorAll(".list-button.edit");
+let todoSelectedButtons = document.querySelectorAll(".list-button.checkbox");
+
+
 let appPages = {
     "one": totalTodoList.slice(0,6),
     "two": totalTodoList.slice(6,12),
@@ -12,6 +17,7 @@ let appPages = {
     "ten": totalTodoList.slice(53,59),
 }
 
+//Function to update the appPages object as new todos are added. 
 const checkAppPages = () => {
     appPages["one"] = totalTodoList.slice(0,6);
     appPages["two"] = totalTodoList.slice(6,12);
@@ -36,7 +42,6 @@ window.addEventListener("load", () => {
         if (page !== "one") {
             document.querySelector(`#${page}`).disabled = true;
             document.querySelector(`#${page}`).style.backgroundColor = "grey";
-            document.querySelector(`#${page}`).style.boxShadow = "-3px 0px 2px 0px black";
             document.querySelector(`#${page}`).innerHTML = "";
             document.querySelector(`#${page}`).style.scale = "1";
             document.querySelector(`#${page}`).style.cursor = "auto";
@@ -44,23 +49,35 @@ window.addEventListener("load", () => {
     } 
 })
 
+// Function to check which page Selectors need to be enabled (based on totalTodoList)
 const checkPageNumbers = () => {
     for (page in appPages) {
         if (appPages[page].length > 0) {
+            if (page == currentPage) {
+                document.querySelector(`#${page}`).style.backgroundColor = "teal";
+            } else {
+                document.querySelector(`#${page}`).style.backgroundColor = "#D3D3D3";
+            }
             document.querySelector(`#${page}`).disabled = false;
-            document.querySelector(`#${page}`).style.backgroundColor = "#D3D3D3";
-            document.querySelector(`#${page}`).style.boxShadow = "-3px 0px 5px 0px teal";
             document.querySelector(`#${page}`).innerHTML = `${page}`;
             document.querySelector(`#${page}`).style.scale = "1.02";
             document.querySelector(`#${page}`).style.cursor = "pointer";
 
         } else {
+            if (page == "one") {
+                return;
+            }
             document.querySelector(`#${page}`).disabled = true;
             document.querySelector(`#${page}`).style.backgroundColor = "grey";
-            document.querySelector(`#${page}`).style.boxShadow = "-3px 0px 2px 0px black";
             document.querySelector(`#${page}`).innerHTML = "";
             document.querySelector(`#${page}`).style.scale = "1";
             document.querySelector(`#${page}`).style.cursor = "auto";
+            if (page == currentPage) {
+                const pages = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]; 
+                let currentPageIndex = pages.indexOf(page)
+                currentPage = pages[currentPageIndex - 1];
+                document.querySelector(`#${currentPage}`).style.backgroundColor = "teal";
+            }
         }
     }
 }
@@ -81,6 +98,7 @@ document.querySelector(".submit").addEventListener("click", () => {
     itemControls.setAttribute("class", "item-controls")
     listItem.append(text);
 
+    //This loop creates the buttons that go on each todo item
     for (let i = 0; i < 3; i++) {
         const listButton = document.createElement("button");
         if (i < 2) {
@@ -88,12 +106,11 @@ document.querySelector(".submit").addEventListener("click", () => {
             icon.setAttribute("class", `${iconClasses[i]}`);
             listButton.appendChild(icon);
             listButton.setAttribute("class", "list-button");
-            listButton.setAttribute("id", `${buttonClasses[i]}`);
-            itemControls.appendChild(listButton)
+            listButton.className += ` ${buttonClasses[i]}`;
+            itemControls.appendChild(listButton);
         } else {
-            listButton.style.backgroundColor = "black";         
             listButton.setAttribute("class", "list-button");
-            listButton.setAttribute("id", `${buttonClasses[i]}`);
+            listButton.className += ` ${buttonClasses[i]}`;
             itemControls.appendChild(listButton);
         }
     }
@@ -102,8 +119,8 @@ document.querySelector(".submit").addEventListener("click", () => {
     listItem.appendChild(itemControls);
     listItem.setAttribute("class", "todo");
     totalTodoList.unshift(listItem);
-    console.log(totalTodoList);
     const list = document.querySelector(".todo-list");
+    //Checking that the total number of todo items doesn't exceed the page limit. 
     if (currentPage == "one" && totalTodoList.length > 6) {
         list.removeChild(list.lastChild);
         list.insertBefore(listItem, list.firstElementChild);
@@ -115,8 +132,48 @@ document.querySelector(".submit").addEventListener("click", () => {
     displayPage(currentPage);
     document.querySelector(`#${currentPage}`).style.backgroundColor = "teal";
     document.querySelector(".user-input").value = "";
+    
+
+    //Creating and handling click to delete function for each list item
+    todoDeleteButtons = document.querySelectorAll(".list-button.delete");
+    todoDeleteButtons.forEach(deletor => {
+    deletor.addEventListener("click", () => {
+        const todo = deletor.parentElement.parentElement;
+        const todoList = document.querySelector(".todo-list");
+        if (todoList.contains(todo)) {
+            todoList.removeChild(todo);
+        } else {
+            return;
+        }
+        let newTodoList = [];
+        for (let i = 0; i < totalTodoList.length; i++) {
+            if (i !== totalTodoList.indexOf(todo)) {
+                newTodoList.push(totalTodoList[i])
+            }
+        }
+
+    //Handling click for todo edit buttons.         
+    document.querySelectorAll(".list-button.edit").forEach(editor => {
+        editor.addEventListener("click", () => {
+            let todo = editor.parentElement.parentElement;
+            let newTodo = prompt("What would you like to do instead?");
+            todo.removeChild(todo.firstElementChild);
+            todo.insertBefore(newTodo, todo.firstElementChild);
+            
+        })
+    })
+
+
+    totalTodoList = newTodoList;
+    checkAppPages();
+    checkPageNumbers();
+    displayPage(currentPage);
+    })
 })
 
+})
+
+//reset the page selector buttons. May rename to resetPageButtons
 const resetButtons = () => {
     const buttons = document.querySelectorAll(".page-selector");
     buttons.forEach(button => {
@@ -125,6 +182,7 @@ const resetButtons = () => {
 })
 }
 
+//Handling click for the page selector buttons. 
 document.querySelectorAll(".page-selector").forEach(button => {
     button.addEventListener("click", () => {
         if (currentPage == button.id) {
@@ -138,20 +196,10 @@ document.querySelectorAll(".page-selector").forEach(button => {
    })
 })
 
-/* const clearTodoSection = () => {
-    const todoListElements = document.querySelector(".todo-list").children;
-    const todoList = document.querySelector(".todo-list");
-    for (element of todoListElements) {
-        todoList.remove(element);
-    }
-} */
-
-
 const displayPage = (pageNum) => {
     const todoList = document.querySelector(".todo-list");
     todoList.innerHTML ="";
     const todoSection = document.querySelector(".list-section");
-    //clearTodoSection();
     for (page in appPages){
         if (pageNum == page) {
             for (let i = 0; i < appPages[page].length; i++) {
@@ -159,10 +207,7 @@ const displayPage = (pageNum) => {
                     todoList.appendChild(pageContentItem);
             }
             todoSection.appendChild(todoList);
+            document.querySelector(`#${pageNum}`).backgroundColor = "teal"
         }
     }
 }
-
-
-
-
