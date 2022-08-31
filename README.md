@@ -17,5 +17,9 @@ STOPPED: 29.08.22 // 17:18
 RESUMED: 29.08.22 //18:00
 STOPPED: 30.08.22 // 00:16 -- with breaks
 RESUMED: 30.08.22 // 18:10
-STOPPED: 
+
+Put project on pause to resume Odin Project. 
+
+Main takeaways so far have been handling pages of an applet using objects and arrays, iterating through pages and checking which one to display (as per the displayPages() function) and handling the list item deletion. 
+
 FINISH: 
